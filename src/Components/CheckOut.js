@@ -3,6 +3,16 @@ import { getFirestore } from "../Libs/firebase";
 import CartContext from "../Providers/CartProvider";
 import "./CheckOut.css";
 
+const calculateTotal = (cartItems) => {
+  let total = 0;
+
+  for (let i = 0; i < cartItems.length; i++) {
+    const cartItem = cartItems[i];
+    total += cartItem.quantity * cartItem.price;
+  }
+  return total;
+};
+
 const CheckOut = () => {
   const { cartItems } = useContext(CartContext);
   const [Name, setName] = useState("");
@@ -14,6 +24,8 @@ const CheckOut = () => {
     const Orders = db.collection("orders");
     const NewOrder = {
       Buyer: { name: Name, mail: Mail, phone: PhoneNumber },
+      Items: cartItems,
+      Total: calculateTotal(cartItems),
     };
     Orders.add(NewOrder).then(() => {
       alert("Order finished succesfully");
@@ -98,7 +110,7 @@ const CheckOut = () => {
             <p>
               Total{" "}
               <span className="price">
-                <b>$30</b>
+                <b>{calculateTotal(cartItems)}</b>
               </span>
             </p>
           </div>
